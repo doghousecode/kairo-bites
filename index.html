@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Quick Bite Generator</title>
+    <style>
+        :root {
+            color-scheme: light dark;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+            padding: 24px;
+            min-height: 100%;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        
+        @media (prefers-color-scheme: light) {
+            body { background: rgba(246, 246, 246, 0.8); color: #1d1d1f; }
+            .card { background: rgba(255, 255, 255, 0.8); border: 1px solid rgba(0, 0, 0, 0.1); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); }
+            .tag { background: rgba(0, 122, 255, 0.12); color: #007AFF; }
+            .section-label { color: #86868b; }
+            .creative-box { background: rgba(255, 149, 0, 0.1); border-left: 3px solid #FF9500; }
+            .insight-box { background: rgba(52, 199, 89, 0.1); border-left: 3px solid #34C759; }
+            .btn { background: linear-gradient(135deg, #007AFF, #0055D4); color: white; }
+            .btn:hover { background: linear-gradient(135deg, #0066CC, #004AAD); }
+            .btn-secondary { background: rgba(0, 0, 0, 0.05); color: #1d1d1f; }
+            .btn-secondary:hover { background: rgba(0, 0, 0, 0.1); }
+            .streak-badge { background: rgba(255, 59, 48, 0.1); color: #FF3B30; }
+            .mode-btn.active { background: #007AFF; color: white; }
+            .mode-btn { background: rgba(0, 0, 0, 0.05); color: #1d1d1f; }
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            body { background: rgba(28, 28, 30, 0.9); color: #f5f5f7; }
+            .card { background: rgba(44, 44, 46, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); }
+            .tag { background: rgba(10, 132, 255, 0.2); color: #0A84FF; }
+            .section-label { color: #98989d; }
+            .creative-box { background: rgba(255, 159, 10, 0.15); border-left: 3px solid #FF9F0A; }
+            .insight-box { background: rgba(48, 209, 88, 0.15); border-left: 3px solid #30D158; }
+            .btn { background: linear-gradient(135deg, #0A84FF, #0066CC); color: white; }
+            .btn:hover { background: linear-gradient(135deg, #0077ED, #0055B3); }
+            .btn-secondary { background: rgba(255, 255, 255, 0.1); color: #f5f5f7; }
+            .btn-secondary:hover { background: rgba(255, 255, 255, 0.15); }
+            .streak-badge { background: rgba(255, 69, 58, 0.2); color: #FF453A; }
+            .mode-btn.active { background: #0A84FF; color: white; }
+            .mode-btn { background: rgba(255, 255, 255, 0.1); color: #f5f5f7; }
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .header p {
+            font-size: 15px;
+            opacity: 0.7;
+        }
+        
+        .streak-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-top: 12px;
+        }
+        
+        .mode-selector {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .mode-btn {
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: none;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .card {
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        
+        .bite-number {
+            font-size: 13px;
+            font-weight: 600;
+            opacity: 0.5;
+            margin-bottom: 8px;
+        }
+        
+        .theme {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        
+        .theme h2 {
+            font-size: 22px;
+            font-weight: 600;
+        }
+        
+        .tag {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .section {
+            margin-bottom: 16px;
+        }
+        
+        .section-label {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+        
+        .section-content {
+            font-size: 15px;
+            line-height: 1.5;
+        }
+        
+        .creative-box, .insight-box {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-top: 6px;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            flex: 1;
+            min-width: 140px;
+            padding: 14px 20px;
+            border-radius: 12px;
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn:active {
+            transform: scale(0.98);
+        }
+        
+        .history-section {
+            margin-top: 24px;
+        }
+        
+        .history-section h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            opacity: 0.7;
+        }
+        
+        .history-item {
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .history-item:hover {
+            transform: translateX(4px);
+        }
+        
+        .history-item .title {
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .history-item .meta {
+            font-size: 12px;
+            opacity: 0.6;
+            margin-top: 2px;
+        }
+        
+        .copied-toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 500;
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .copied-toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .copied-toast { background: rgba(255, 255, 255, 0.9); color: #1d1d1f; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🧠 AI Quick Bite</h1>
+        <p>Build your AI muscle memory, one bite at a time</p>
+        <div class="streak-badge" id="streakBadge">
+            🔥 <span id="streakCount">1</span> day streak
+        </div>
+    </div>
+    
+    <div class="mode-selector">
+        <button class="mode-btn active" data-mode="all">🎲 Any</button>
+        <button class="mode-btn" data-mode="work">💼 Work</button>
+        <button class="mode-btn" data-mode="creative">🎨 Creative</button>
+        <button class="mode-btn" data-mode="personal">🏠 Personal</button>
+    </div>
+    
+    <div class="card" id="biteCard">
+        <div class="bite-number" id="biteNumber">Quick Bite #1</div>
+        
+        <div class="theme">
+            <h2 id="biteTheme">"Default to AI First"</h2>
+            <span class="tag" id="biteTag">Habit</span>
+        </div>
+        
+        <div class="section">
+            <div class="section-label">🎯 Action</div>
+            <div class="section-content" id="biteAction">
+                Before starting any task (email, meeting, decision), ask AI to help think it through first.
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-label">💡 Why It Matters</div>
+            <div class="section-content" id="biteWhy">
+                Rewires your instinct from "I'll do it myself" → "AI helps me think first." Compounds time savings and clarity.
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-label">🎨 Creative Twist</div>
+            <div class="creative-box" id="biteTwist">
+                Try it on a personal task — planning a weekend, phrasing a kind message to a friend.
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-label">📝 Team-Shareable Insight</div>
+            <div class="insight-box" id="biteInsight">
+                "Remember: AI first, action second."
+            </div>
+        </div>
+    </div>
+    
+    <div class="actions">
+        <button class="btn" id="newBiteBtn">🎰 New Bite</button>
+        <button class="btn btn-secondary" id="copyBtn">📋 Copy</button>
+    </div>
+    
+    <div class="history-section card" id="historySection" style="display: none;">
+        <h3>📚 Recent Bites</h3>
+        <div id="historyList"></div>
+    </div>
+    
+    <div class="copied-toast" id="toast">✓ Copied to clipboard!</div>
+
+    <script>
+        const quickBites = [
+            {
+                theme: '"Default to AI First"',
+                tag: 'Habit',
+                mode: 'work',
+                action: 'Before starting any task (email, meeting, decision), ask AI to help think it through first.',
+                why: 'Rewires your instinct from "I\'ll do it myself" → "AI helps me think first." Compounds time savings and clarity.',
+                twist: 'Try it on a personal task — planning a weekend, phrasing a kind message to a friend.',
+                insight: '"Remember: AI first, action second."'
+            },
+            {
+                theme: '"The 80/20 Prompt"',
+                tag: 'Technique',
+                mode: 'work',
+                action: 'When you get a mediocre AI response, don\'t start over. Reply with: "That\'s 80% there. The missing 20% is [specific thing]."',
+                why: 'Most people abandon prompts too early. The magic happens in the refinement. You\'re training yourself to collaborate with AI.',
+                twist: 'Ask AI to write a haiku about your morning coffee, then refine it until it genuinely makes you smile.',
+                insight: '"Don\'t restart, refine. Tell AI what\'s missing, not what\'s wrong."'
+            },
+            {
+                theme: '"AI Meeting Prep"',
+                tag: 'Productivity',
+                mode: 'work',
+                action: '5 minutes before any meeting, paste the agenda into AI and ask: "What questions should I be ready to answer? What should I ask others?"',
+                why: 'Transforms you from passive attendee to prepared contributor. Others will notice.',
+                twist: 'Try it before a social call with a friend — "What thoughtful questions could I ask about their life?"',
+                insight: '"5 minutes of AI prep beats 50 minutes of winging it."'
+            },
+            {
+                theme: '"Explain It To Me Like..."',
+                tag: 'Learning',
+                mode: 'all',
+                action: 'When learning something complex, ask AI to explain it as if you were a [curious 10-year-old / sci-fi author / skeptical investor].',
+                why: 'Different mental models unlock different understanding. The "right" explanation depends on how your brain works.',
+                twist: 'Ask AI to explain your job to an alien who just landed on Earth.',
+                insight: '"Understanding isn\'t one-size-fits-all. Ask for the explanation that fits YOUR brain."'
+            },
+            {
+                theme: '"The Devil\'s Advocate"',
+                tag: 'Decision-Making',
+                mode: 'work',
+                action: 'Before finalising any decision, ask AI: "Argue against this. What am I missing? What could go wrong?"',
+                why: 'Catches blind spots before they become expensive mistakes. Builds intellectual humility.',
+                twist: 'Try it on a fun decision — where to go on holiday, what to cook for dinner.',
+                insight: '"Your best ideas get better when stress-tested. Let AI play devil\'s advocate."'
+            },
+            {
+                theme: '"Morning Brain Dump"',
+                tag: 'Creativity',
+                mode: 'personal',
+                action: 'Start each day by voice-typing everything on your mind to AI, then ask it to organise your thoughts into priorities.',
+                why: 'Clears mental clutter and reveals what actually matters. The brain is for having ideas, not holding them.',
+                twist: 'Include your dreams, random worries, and shower thoughts. See what patterns AI finds.',
+                insight: '"Dump it, don\'t carry it. AI can be your external brain."'
+            },
+            {
+                theme: '"The Rubber Duck+"',
+                tag: 'Problem-Solving',
+                mode: 'work',
+                action: 'When stuck, explain your problem to AI in exhaustive detail — what you\'ve tried, why it failed, what you think might work.',
+                why: 'The act of explaining often reveals the answer. AI can then suggest angles you missed.',
+                twist: 'Explain a personal dilemma the same way. Sometimes the "professional" approach works on life too.',
+                insight: '"Rubber duck debugging, supercharged. Explain to understand."'
+            },
+            {
+                theme: '"Remix Your Writing"',
+                tag: 'Communication',
+                mode: 'creative',
+                action: 'After drafting any message, ask AI: "Rewrite this in 3 different tones: warmer, more direct, more playful."',
+                why: 'Expands your range. You\'ll often find a version that\'s better than your default voice for that context.',
+                twist: 'Try it with a text to a friend. See which version feels most "you."',
+                insight: '"Your first draft is a starting point, not a prison. Explore the alternatives."'
+            },
+            {
+                theme: '"Weekly Wins Review"',
+                tag: 'Reflection',
+                mode: 'personal',
+                action: 'Every Friday, tell AI your wins and struggles from the week. Ask it to spot patterns and suggest one focus for next week.',
+                why: 'Turns scattered experiences into actionable insight. Builds a relationship with your own growth.',
+                twist: 'Include personal wins too — that good conversation, the workout you almost skipped but did anyway.',
+                insight: '"What gets reflected on, gets improved. Make AI your accountability partner."'
+            },
+            {
+                theme: '"The Curiosity Prompt"',
+                tag: 'Learning',
+                mode: 'creative',
+                action: 'Once a day, ask AI a question you\'ve always wondered about but never looked up. Go deep.',
+                why: 'Rekindles intellectual curiosity. Most adults stop asking "why?" — this brings it back.',
+                twist: 'Ask something "embarrassingly basic" that you feel you should already know. No shame, only learning.',
+                insight: '"Curiosity is a muscle. Use AI to exercise it daily."'
+            },
+            {
+                theme: '"Translate for Your Audience"',
+                tag: 'Communication',
+                mode: 'work',
+                action: 'Before sending any cross-team message, ask AI: "Rewrite this for [audience] who cares about [their priorities]."',
+                why: 'Same information, different framing. Engineers, designers, executives — they all hear differently.',
+                twist: 'Try explaining your weekend plans to a 5-year-old, then to your grandparent. Notice the difference.',
+                insight: '"Great communicators translate. AI helps you speak everyone\'s language."'
+            },
+            {
+                theme: '"The Summarise Chain"',
+                tag: 'Productivity',
+                mode: 'work',
+                action: 'After any long read (article, document, thread), paste it into AI and ask for: 1) 3-sentence summary, 2) key insight, 3) one action you should take.',
+                why: 'Transforms passive consumption into active learning. You\'ll remember more and act on it.',
+                twist: 'Try it on a personal conversation you had. What was the real message?',
+                insight: '"Reading isn\'t learning. Summarising and acting is."'
+            }
+        ];
+        
+        let currentBite = 0;
+        let history = [];
+        let streak = parseInt(localStorage.getItem('aiStreak') || '1');
+        let lastVisit = localStorage.getItem('lastVisitDate');
+        let currentMode = 'all';
+        
+        // Check and update streak
+        const today = new Date().toDateString();
+        if (lastVisit) {
+            const yesterday = new Date(Date.now() - 86400000).toDateString();
+            if (lastVisit === yesterday) {
+                streak++;
+            } else if (lastVisit !== today) {
+                streak = 1;
+            }
+        }
+        localStorage.setItem('lastVisitDate', today);
+        localStorage.setItem('aiStreak', streak.toString());
+        document.getElementById('streakCount').textContent = streak;
+        
+        // Mode selector
+        document.querySelectorAll('.mode-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentMode = btn.dataset.mode;
+            });
+        });
+        
+        function getFilteredBites() {
+            if (currentMode === 'all') return quickBites;
+            return quickBites.filter(b => b.mode === currentMode || b.mode === 'all');
+        }
+        
+        function displayBite(bite, index) {
+            document.getElementById('biteNumber').textContent = `Quick Bite #${index + 1}`;
+            document.getElementById('biteTheme').textContent = bite.theme;
+            document.getElementById('biteTag').textContent = bite.tag;
+            document.getElementById('biteAction').textContent = bite.action;
+            document.getElementById('biteWhy').textContent = bite.why;
+            document.getElementById('biteTwist').textContent = bite.twist;
+            document.getElementById('biteInsight').textContent = bite.insight;
+            
+            // Animate in
+            const card = document.getElementById('biteCard');
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(10px)';
+            setTimeout(() => {
+                card.style.transition = 'all 0.3s ease';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, 50);
+        }
+        
+        function updateHistory() {
+            const historySection = document.getElementById('historySection');
+            const historyList = document.getElementById('historyList');
+            
+            if (history.length > 0) {
+                historySection.style.display = 'block';
+                historyList.innerHTML = history.slice(-5).reverse().map((item, i) => `
+                    <div class="history-item card" onclick="displayBite(quickBites[${item.index}], ${item.index})">
+                        <div class="title">${item.theme}</div>
+                        <div class="meta">${item.tag} • Viewed just now</div>
+                    </div>
+                `).join('');
+            }
+        }
+        
+        document.getElementById('newBiteBtn').addEventListener('click', () => {
+            const filtered = getFilteredBites();
+            let newIndex;
+            do {
+                newIndex = Math.floor(Math.random() * filtered.length);
+            } while (filtered.length > 1 && quickBites.indexOf(filtered[newIndex]) === currentBite);
+            
+            currentBite = quickBites.indexOf(filtered[newIndex]);
+            const bite = quickBites[currentBite];
+            
+            history.push({ index: currentBite, theme: bite.theme, tag: bite.tag });
+            displayBite(bite, currentBite);
+            updateHistory();
+        });
+        
+        document.getElementById('copyBtn').addEventListener('click', () => {
+            const bite = quickBites[currentBite];
+            const text = `🧠 AI Quick Bite #${currentBite + 1}
+
+📌 Theme: ${bite.theme}
+🏷️ Category: ${bite.tag}
+
+🎯 Action:
+${bite.action}
+
+💡 Why It Matters:
+${bite.why}
+
+🎨 Creative Twist:
+${bite.twist}
+
+📝 Team-Shareable Insight:
+${bite.insight}
+
+---
+Generated by AI Quick Bite Trainer`;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                const toast = document.getElementById('toast');
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 2000);
+            });
+        });
+        
+        // Initialize
+        displayBite(quickBites[0], 0);
+    </script>
+</body>
+</html>
