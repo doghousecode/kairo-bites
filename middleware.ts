@@ -14,13 +14,6 @@ export default function middleware(request: Request, context: RequestContext) {
     return
   }
 
-  const cookie = request.headers.get('cookie') || ''
-  const hasAuth = cookie.split(';').some(c => c.trim() === 'kairo-auth=granted')
-
-  if (!hasAuth) {
-    const url = new URL('/password', request.url)
-    return Response.redirect(url.toString(), 302)
-  }
-
+  // Password requirement temporarily disabled
   return
 }
