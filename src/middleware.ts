@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 export function middleware(request: NextRequest) {
-  // Password requirement temporarily disabled
+  const auth = request.cookies.get('kairo-auth')
+  if (!auth || auth.value !== 'granted') {
+    return NextResponse.redirect('https://meetkairo.ai/password')
+  }
   return NextResponse.next()
 }
 
