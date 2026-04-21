@@ -3,116 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Quick Bite Generator</title>
+    <title>Kairo Bites</title>
+    <meta name="theme-color" content="#0d0d0d">
     <link rel="icon" href="icon.png">
     <link rel="apple-touch-icon" href="apple-icon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@1,800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Jost:ital,wght@1,700;1,800&display=swap" rel="stylesheet">
     <style>
         :root {
-            color-scheme: light dark;
+            color-scheme: dark;
+            --rgb: 255,255,255;
+            --surface: #0d0d1c;
+            --card-bg: rgba(255,255,255,0.04);
+            --card-border: rgba(255,255,255,0.09);
+            --deep-bg: rgba(255,255,255,0.025);
+            --deep-border: rgba(255,255,255,0.07);
+            --btn-accent: rgba(199,210,254,1);
+            --btn-accent-bg: rgba(99,102,241,0.22);
+            --btn-accent-border: rgba(99,102,241,0.28);
+            --kairo-navy: #2a3a6a;
+            --decode-blue: #5b80e8;
         }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
+            background: #0d0d0d;
+            min-height: 100vh;
         }
-        
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+            font-family: 'DM Sans', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg,#080810 0%,#0d0d1c 60%,#080812 100%);
+            color: rgba(var(--rgb),0.88);
+            -webkit-font-smoothing: antialiased;
             padding: 24px;
-            padding-top: 96px;
-            min-height: 100%;
-            transition: background-color 0.3s, color 0.3s;
+            padding-top: 132px;
+            padding-bottom: 3rem;
         }
-        
-        @media (prefers-color-scheme: light) {
-            body { background: rgba(246, 246, 246, 0.8); color: #1d1d1f; }
-            .card { background: rgba(255, 255, 255, 0.8); border: 1px solid rgba(0, 0, 0, 0.1); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); }
-            .tag { background: rgba(0, 122, 255, 0.12); color: #007AFF; }
-            .section-label { color: #86868b; }
-            .creative-box { background: rgba(255, 149, 0, 0.1); border-left: 3px solid #FF9500; }
-            .insight-box { background: rgba(52, 199, 89, 0.1); border-left: 3px solid #34C759; }
-            .btn { background: linear-gradient(135deg, #007AFF, #0055D4); color: white; }
-            .btn:hover { background: linear-gradient(135deg, #0066CC, #004AAD); }
-            .btn-secondary { background: rgba(0, 0, 0, 0.05); color: #1d1d1f; }
-            .btn-secondary:hover { background: rgba(0, 0, 0, 0.1); }
-            .streak-badge { background: rgba(255, 59, 48, 0.1); color: #FF3B30; }
-            .mode-btn.active { background: #007AFF; color: white; }
-            .mode-btn { background: rgba(0, 0, 0, 0.05); color: #1d1d1f; }
+
+        .page {
+            max-width: 680px;
+            margin: 0 auto;
         }
-        
-        @media (prefers-color-scheme: dark) {
-            body { background: rgba(28, 28, 30, 0.9); color: #f5f5f7; }
-            .card { background: rgba(44, 44, 46, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); }
-            .tag { background: rgba(10, 132, 255, 0.2); color: #0A84FF; }
-            .section-label { color: #98989d; }
-            .creative-box { background: rgba(255, 159, 10, 0.15); border-left: 3px solid #FF9F0A; }
-            .insight-box { background: rgba(48, 209, 88, 0.15); border-left: 3px solid #30D158; }
-            .btn { background: linear-gradient(135deg, #0A84FF, #0066CC); color: white; }
-            .btn:hover { background: linear-gradient(135deg, #0077ED, #0055B3); }
-            .btn-secondary { background: rgba(255, 255, 255, 0.1); color: #f5f5f7; }
-            .btn-secondary:hover { background: rgba(255, 255, 255, 0.15); }
-            .streak-badge { background: rgba(255, 69, 58, 0.2); color: #FF453A; }
-            .mode-btn.active { background: #0A84FF; color: white; }
-            .mode-btn { background: rgba(255, 255, 255, 0.1); color: #f5f5f7; }
-        }
-        
+
+        /* Fixed header */
         .fixed-header {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
-            z-index: 100;
-            padding: 20px 24px;
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            z-index: 50;
+            padding: 0 20px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--deep-border);
         }
 
-        @media (prefers-color-scheme: light) {
-            .fixed-header { background: rgba(246, 246, 246, 0.85); border-bottom-color: rgba(0, 0, 0, 0.08); }
+        .fixed-header-inner {
+            max-width: 680px;
+            margin: 0 auto;
+            padding-top: 1.1rem;
+            padding-bottom: 1rem;
         }
 
-        @media (prefers-color-scheme: dark) {
-            .fixed-header { background: rgba(13, 13, 13, 0.85); }
-        }
-
-        .fixed-header h1 {
-            font-family: 'Jost', sans-serif;
+        .wordmark {
+            font-family: 'Jost', system-ui, sans-serif;
             font-weight: 800;
-            font-style: oblique;
-            font-size: 32px;
+            font-style: italic;
+            font-size: 1.75rem;
             line-height: 1;
             letter-spacing: -0.01em;
+            color: var(--kairo-navy);
         }
 
-        .fixed-header h1 .word-kairo { color: #2a3a6a; }
-        .fixed-header h1 .word-bites { color: #5b80e8; }
+        .wordmark .accent { color: var(--decode-blue); }
 
-        .header {
+        .tagline {
+            font-family: 'DM Sans', system-ui, sans-serif;
+            font-size: 0.83rem;
+            color: rgba(var(--rgb),0.32);
+            margin-top: 8px;
+            letter-spacing: 0;
+        }
+
+        /* Streak + mode selector */
+        .intro {
             text-align: center;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
         }
 
-        .header p {
-            font-size: 15px;
-            opacity: 0.7;
+        .intro p {
+            font-size: 0.9rem;
+            color: rgba(var(--rgb),0.55);
         }
-        
+
         .streak-badge {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 14px;
+            padding: 5px 12px;
+            border-radius: 999px;
+            font-size: 0.78rem;
             font-weight: 600;
             margin-top: 12px;
+            background: rgba(249,115,22,0.14);
+            color: rgba(253,186,116,0.95);
+            border: 1px solid rgba(249,115,22,0.28);
         }
-        
+
         .mode-selector {
             display: flex;
             gap: 8px;
@@ -120,89 +119,144 @@
             margin-bottom: 20px;
             flex-wrap: wrap;
         }
-        
+
         .mode-btn {
-            padding: 8px 16px;
-            border-radius: 20px;
-            border: none;
-            font-size: 14px;
+            padding: 6px 14px;
+            border-radius: 999px;
+            border: 1px solid rgba(var(--rgb),0.09);
+            background: transparent;
+            color: rgba(var(--rgb),0.55);
+            font-family: inherit;
+            font-size: 0.78rem;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.2s ease;
         }
-        
+
+        .mode-btn:hover {
+            border-color: rgba(var(--rgb),0.18);
+            color: rgba(var(--rgb),0.8);
+        }
+
+        .mode-btn.active {
+            background: rgba(99,102,241,0.18);
+            border-color: rgba(99,102,241,0.55);
+            color: rgba(199,210,254,1);
+        }
+
+        /* Card */
         .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
             border-radius: 16px;
             padding: 24px;
             margin-bottom: 20px;
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            overflow: hidden;
         }
-        
+
         .bite-number {
-            font-size: 13px;
-            font-weight: 600;
-            opacity: 0.5;
-            margin-bottom: 8px;
-        }
-        
-        .theme {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 16px;
-        }
-        
-        .theme h2 {
-            font-size: 22px;
-            font-weight: 600;
-        }
-        
-        .tag {
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-        
-        .section {
-            margin-bottom: 16px;
-        }
-        
-        .section-label {
-            font-size: 12px;
+            font-size: 0.72rem;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 6px;
+            letter-spacing: 0.12em;
+            color: rgba(var(--rgb),0.32);
+            margin-bottom: 10px;
         }
-        
-        .section-content {
-            font-size: 15px;
-            line-height: 1.5;
-        }
-        
-        .creative-box, .insight-box {
-            padding: 12px 16px;
-            border-radius: 8px;
-            margin-top: 6px;
-        }
-        
-        .actions {
+
+        .theme {
             display: flex;
+            align-items: flex-start;
             gap: 12px;
-            margin-top: 24px;
+            margin-bottom: 20px;
             flex-wrap: wrap;
         }
-        
+
+        .theme h2 {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: rgba(var(--rgb),0.95);
+            letter-spacing: -0.01em;
+            line-height: 1.25;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 3px 10px;
+            border-radius: 999px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            border: 1px solid;
+            flex-shrink: 0;
+            margin-top: 4px;
+        }
+
+        .section {
+            margin-bottom: 18px;
+        }
+
+        .section:last-child {
+            margin-bottom: 0;
+        }
+
+        .section-label {
+            font-size: 0.72rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: rgba(var(--rgb),0.3);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-content {
+            font-size: 0.95rem;
+            line-height: 1.55;
+            color: rgba(var(--rgb),0.78);
+        }
+
+        .creative-box,
+        .insight-box {
+            background: var(--deep-bg);
+            border: 1px solid var(--deep-border);
+            padding: 14px 16px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            line-height: 1.55;
+            color: rgba(var(--rgb),0.68);
+        }
+
+        .insight-box {
+            font-style: italic;
+            color: rgba(var(--rgb),0.78);
+        }
+
+        /* Actions */
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 8px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
         .btn {
             flex: 1;
             min-width: 140px;
-            padding: 14px 20px;
+            padding: 12px 20px;
             border-radius: 12px;
-            border: none;
-            font-size: 16px;
+            border: 1px solid var(--btn-accent-border);
+            background: var(--btn-accent-bg);
+            color: var(--btn-accent);
+            font-family: inherit;
+            font-size: 0.92rem;
             font-weight: 600;
+            letter-spacing: 0.01em;
             cursor: pointer;
             transition: all 0.2s ease;
             display: flex;
@@ -210,140 +264,199 @@
             justify-content: center;
             gap: 8px;
         }
-        
+
+        .btn:hover {
+            background: rgba(99,102,241,0.3);
+            border-color: rgba(99,102,241,0.45);
+        }
+
         .btn:active {
             transform: scale(0.98);
         }
-        
+
+        .btn-secondary {
+            background: rgba(var(--rgb),0.04);
+            border: 1px solid rgba(var(--rgb),0.1);
+            color: rgba(var(--rgb),0.8);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(var(--rgb),0.08);
+            border-color: rgba(var(--rgb),0.18);
+        }
+
+        /* History */
         .history-section {
-            margin-top: 24px;
+            margin-top: 8px;
         }
-        
+
         .history-section h3 {
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 12px;
-            opacity: 0.7;
+            font-size: 0.72rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: rgba(var(--rgb),0.3);
+            margin-bottom: 14px;
         }
-        
+
         .history-item {
             padding: 12px 16px;
             border-radius: 10px;
             margin-bottom: 8px;
             cursor: pointer;
             transition: all 0.2s ease;
+            background: var(--deep-bg);
+            border: 1px solid var(--deep-border);
         }
-        
+
         .history-item:hover {
-            transform: translateX(4px);
+            background: rgba(var(--rgb),0.05);
+            border-color: rgba(var(--rgb),0.12);
         }
-        
+
         .history-item .title {
             font-weight: 600;
-            font-size: 14px;
+            font-size: 0.88rem;
+            color: rgba(var(--rgb),0.85);
         }
-        
+
         .history-item .meta {
-            font-size: 12px;
-            opacity: 0.6;
-            margin-top: 2px;
+            font-size: 0.72rem;
+            color: rgba(var(--rgb),0.42);
+            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
         }
-        
+
+        /* Toast */
         .copied-toast {
             position: fixed;
             bottom: 24px;
             left: 50%;
             transform: translateX(-50%) translateY(100px);
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 12px 24px;
-            border-radius: 25px;
-            font-size: 14px;
+            background: rgba(99,102,241,0.22);
+            border: 1px solid rgba(99,102,241,0.28);
+            color: rgba(199,210,254,1);
+            padding: 10px 20px;
+            border-radius: 999px;
+            font-size: 0.85rem;
             font-weight: 500;
+            letter-spacing: 0.01em;
             opacity: 0;
             transition: all 0.3s ease;
             z-index: 1000;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
         }
-        
+
         .copied-toast.show {
             transform: translateX(-50%) translateY(0);
             opacity: 1;
         }
-        
-        @media (prefers-color-scheme: dark) {
-            .copied-toast { background: rgba(255, 255, 255, 0.9); color: #1d1d1f; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        #biteCard {
+            animation: fadeIn 0.4s ease forwards;
         }
     </style>
 </head>
 <body>
     <header class="fixed-header">
-        <h1><span class="word-kairo">k<span class="word-bites">ai</span>ro</span> <span class="word-bites">bites</span></h1>
+        <div class="fixed-header-inner">
+            <div class="wordmark">k<span class="accent">ai</span>ro <span class="accent">bites</span></div>
+            <p class="tagline">adaptive intelligence daily workout</p>
+        </div>
     </header>
 
-    <div class="header">
-        <p>Build your AI muscle memory, one bite at a time</p>
-        <div class="streak-badge" id="streakBadge">
-            🔥 <span id="streakCount">1</span> day streak
-        </div>
-    </div>
-    
-    <div class="mode-selector">
-        <button class="mode-btn active" data-mode="all">🎲 Any</button>
-        <button class="mode-btn" data-mode="work">💼 Work</button>
-        <button class="mode-btn" data-mode="creative">🎨 Creative</button>
-        <button class="mode-btn" data-mode="personal">🏠 Personal</button>
-    </div>
-    
-    <div class="card" id="biteCard">
-        <div class="bite-number" id="biteNumber">Quick Bite #1</div>
-        
-        <div class="theme">
-            <h2 id="biteTheme">"Default to AI First"</h2>
-            <span class="tag" id="biteTag">Habit</span>
-        </div>
-        
-        <div class="section">
-            <div class="section-label">🎯 Action</div>
-            <div class="section-content" id="biteAction">
-                Before starting any task (email, meeting, decision), ask AI to help think it through first.
+    <div class="page">
+        <div class="intro">
+            <p>Build your AI muscle memory, one bite at a time</p>
+            <div class="streak-badge" id="streakBadge">
+                🔥 <span id="streakCount">1</span> day streak
             </div>
         </div>
-        
-        <div class="section">
-            <div class="section-label">💡 Why It Matters</div>
-            <div class="section-content" id="biteWhy">
-                Rewires your instinct from "I'll do it myself" → "AI helps me think first." Compounds time savings and clarity.
+
+        <div class="mode-selector">
+            <button class="mode-btn active" data-mode="all">Any</button>
+            <button class="mode-btn" data-mode="work">Work</button>
+            <button class="mode-btn" data-mode="creative">Creative</button>
+            <button class="mode-btn" data-mode="personal">Personal</button>
+        </div>
+
+        <div class="card" id="biteCard">
+            <div class="bite-number" id="biteNumber">Quick Bite #1</div>
+
+            <div class="theme">
+                <h2 id="biteTheme">"Default to AI First"</h2>
+                <span class="tag" id="biteTag">Habit</span>
+            </div>
+
+            <div class="section">
+                <div class="section-label">Action</div>
+                <div class="section-content" id="biteAction">
+                    Before starting any task (email, meeting, decision), ask AI to help think it through first.
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-label">Why it matters</div>
+                <div class="section-content" id="biteWhy">
+                    Rewires your instinct from "I'll do it myself" → "AI helps me think first." Compounds time savings and clarity.
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-label">Creative twist</div>
+                <div class="creative-box" id="biteTwist">
+                    Try it on a personal task — planning a weekend, phrasing a kind message to a friend.
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-label">Team-shareable insight</div>
+                <div class="insight-box" id="biteInsight">
+                    "Remember: AI first, action second."
+                </div>
             </div>
         </div>
-        
-        <div class="section">
-            <div class="section-label">🎨 Creative Twist</div>
-            <div class="creative-box" id="biteTwist">
-                Try it on a personal task — planning a weekend, phrasing a kind message to a friend.
-            </div>
+
+        <div class="actions">
+            <button class="btn" id="newBiteBtn">New Bite ✨</button>
+            <button class="btn btn-secondary" id="copyBtn">Copy</button>
         </div>
-        
-        <div class="section">
-            <div class="section-label">📝 Team-Shareable Insight</div>
-            <div class="insight-box" id="biteInsight">
-                "Remember: AI first, action second."
-            </div>
+
+        <div class="history-section" id="historySection" style="display: none;">
+            <h3>Recent bites</h3>
+            <div id="historyList"></div>
         </div>
     </div>
-    
-    <div class="actions">
-        <button class="btn" id="newBiteBtn">🎰 New Bite</button>
-        <button class="btn btn-secondary" id="copyBtn">📋 Copy</button>
-    </div>
-    
-    <div class="history-section card" id="historySection" style="display: none;">
-        <h3>📚 Recent Bites</h3>
-        <div id="historyList"></div>
-    </div>
-    
-    <div class="copied-toast" id="toast">✓ Copied to clipboard!</div>
+
+    <div class="copied-toast" id="toast">✓ Copied to clipboard</div>
 
     <script>
+        const TAG_COLORS = {
+            "Habit":         { bg: "rgba(20,184,166,0.14)",  text: "rgba(94,234,212,1)",   border: "rgba(20,184,166,0.35)" },
+            "Technique":     { bg: "rgba(236,72,153,0.14)",  text: "rgba(244,114,182,1)",  border: "rgba(236,72,153,0.35)" },
+            "Productivity":  { bg: "rgba(59,130,246,0.14)",  text: "rgba(147,197,253,1)",  border: "rgba(59,130,246,0.35)" },
+            "Learning":      { bg: "rgba(139,92,246,0.14)",  text: "rgba(196,181,253,1)",  border: "rgba(139,92,246,0.35)" },
+            "Decision-Making": { bg: "rgba(245,158,11,0.14)", text: "rgba(252,211,77,1)", border: "rgba(245,158,11,0.35)" },
+            "Creativity":    { bg: "rgba(168,85,247,0.14)",  text: "rgba(216,180,254,1)",  border: "rgba(168,85,247,0.35)" },
+            "Problem-Solving": { bg: "rgba(14,165,233,0.14)", text: "rgba(125,211,252,1)", border: "rgba(14,165,233,0.35)" },
+            "Communication": { bg: "rgba(99,102,241,0.14)",  text: "rgba(199,210,254,1)",  border: "rgba(99,102,241,0.35)" },
+            "Reflection":    { bg: "rgba(16,185,129,0.14)",  text: "rgba(110,231,183,1)",  border: "rgba(16,185,129,0.35)" },
+        };
+
+        function applyTagColor(el, tag) {
+            const c = TAG_COLORS[tag] || { bg: "rgba(99,102,241,0.14)", text: "rgba(199,210,254,1)", border: "rgba(99,102,241,0.35)" };
+            el.style.background = c.bg;
+            el.style.color = c.text;
+            el.style.borderColor = c.border;
+        }
+
         const quickBites = [
             {
                 theme: '"Default to AI First"',
@@ -454,14 +567,14 @@
                 insight: '"Reading isn\'t learning. Summarising and acting is."'
             }
         ];
-        
+
         let currentBite = parseInt(localStorage.getItem('currentBite') || '0');
         let history = JSON.parse(localStorage.getItem('biteHistory') || '[]');
         let streak = parseInt(localStorage.getItem('aiStreak') || '1');
         let lastVisit = localStorage.getItem('lastVisitDate');
         let currentMode = 'all';
-        
-        // Check and update streak
+
+        // Streak update
         const today = new Date().toDateString();
         if (lastVisit) {
             const yesterday = new Date(Date.now() - 86400000).toDateString();
@@ -474,7 +587,7 @@
         localStorage.setItem('lastVisitDate', today);
         localStorage.setItem('aiStreak', streak.toString());
         document.getElementById('streakCount').textContent = streak;
-        
+
         // Mode selector
         document.querySelectorAll('.mode-btn').forEach(btn => {
             btn.addEventListener('click', () => {
@@ -483,54 +596,60 @@
                 currentMode = btn.dataset.mode;
             });
         });
-        
+
         function getFilteredBites() {
             if (currentMode === 'all') return quickBites;
             return quickBites.filter(b => b.mode === currentMode || b.mode === 'all');
         }
-        
+
         function displayBite(bite, index) {
             document.getElementById('biteNumber').textContent = `Quick Bite #${index + 1}`;
             document.getElementById('biteTheme').textContent = bite.theme;
-            document.getElementById('biteTag').textContent = bite.tag;
+            const tagEl = document.getElementById('biteTag');
+            tagEl.textContent = bite.tag;
+            applyTagColor(tagEl, bite.tag);
             document.getElementById('biteAction').textContent = bite.action;
             document.getElementById('biteWhy').textContent = bite.why;
             document.getElementById('biteTwist').textContent = bite.twist;
             document.getElementById('biteInsight').textContent = bite.insight;
-            
-            // Animate in
+
             const card = document.getElementById('biteCard');
-            card.style.opacity = '0';
-            card.style.transform = 'translateY(10px)';
-            setTimeout(() => {
-                card.style.transition = 'all 0.3s ease';
-                card.style.opacity = '1';
-                card.style.transform = 'translateY(0)';
-            }, 50);
+            card.style.animation = 'none';
+            // Force reflow to restart animation
+            void card.offsetWidth;
+            card.style.animation = 'fadeIn 0.4s ease forwards';
         }
-        
+
         function updateHistory() {
             const historySection = document.getElementById('historySection');
             const historyList = document.getElementById('historyList');
-            
+
             if (history.length > 0) {
                 historySection.style.display = 'block';
-                historyList.innerHTML = history.slice(-5).reverse().map((item, i) => `
-                    <div class="history-item card" onclick="displayBite(quickBites[${item.index}], ${item.index})">
+                historyList.innerHTML = history.slice(-5).reverse().map((item) => `
+                    <div class="history-item" data-index="${item.index}">
                         <div class="title">${item.theme}</div>
-                        <div class="meta">${item.tag} • Viewed just now</div>
+                        <div class="meta">${item.tag} · viewed just now</div>
                     </div>
                 `).join('');
+                historyList.querySelectorAll('.history-item').forEach(el => {
+                    el.addEventListener('click', () => {
+                        const idx = parseInt(el.dataset.index);
+                        currentBite = idx;
+                        localStorage.setItem('currentBite', currentBite.toString());
+                        displayBite(quickBites[idx], idx);
+                    });
+                });
             }
         }
-        
+
         document.getElementById('newBiteBtn').addEventListener('click', () => {
             const filtered = getFilteredBites();
             let newIndex;
             do {
                 newIndex = Math.floor(Math.random() * filtered.length);
             } while (filtered.length > 1 && quickBites.indexOf(filtered[newIndex]) === currentBite);
-            
+
             currentBite = quickBites.indexOf(filtered[newIndex]);
             const bite = quickBites[currentBite];
 
@@ -540,37 +659,36 @@
             displayBite(bite, currentBite);
             updateHistory();
         });
-        
+
         document.getElementById('copyBtn').addEventListener('click', () => {
             const bite = quickBites[currentBite];
-            const text = `🧠 AI Quick Bite #${currentBite + 1}
+            const text = `Kairo Bite #${currentBite + 1}
 
-📌 Theme: ${bite.theme}
-🏷️ Category: ${bite.tag}
+Theme: ${bite.theme}
+Category: ${bite.tag}
 
-🎯 Action:
+Action:
 ${bite.action}
 
-💡 Why It Matters:
+Why it matters:
 ${bite.why}
 
-🎨 Creative Twist:
+Creative twist:
 ${bite.twist}
 
-📝 Team-Shareable Insight:
+Team-shareable insight:
 ${bite.insight}
 
----
-Generated by AI Quick Bite Trainer`;
-            
+— kairo bites`;
+
             navigator.clipboard.writeText(text).then(() => {
                 const toast = document.getElementById('toast');
                 toast.classList.add('show');
                 setTimeout(() => toast.classList.remove('show'), 2000);
             });
         });
-        
-        // Initialize — restore last viewed bite and history
+
+        // Initialize
         displayBite(quickBites[currentBite], currentBite);
         if (history.length > 0) updateHistory();
     </script>
